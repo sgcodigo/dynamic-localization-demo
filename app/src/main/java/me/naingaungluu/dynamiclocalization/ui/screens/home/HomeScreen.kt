@@ -1,5 +1,8 @@
 package me.naingaungluu.dynamiclocalization.ui.screens.home
 
+import HomeScreenState
+import HomeScreenStateProvider
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -9,11 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import me.naingaungluu.dynamiclocalization.data.models.Localization
 import me.naingaungluu.dynamiclocalization.preferences.AppLanguage
+import me.naingaungluu.dynamiclocalization.ui.screens.components.CodigoButton
+import me.naingaungluu.dynamiclocalization.ui.theme.DynamicLocalizationTheme
 
 @Preview(showBackground = true)
 @Composable
@@ -39,20 +45,22 @@ fun HomeScreen(
     )
 }
 
-@Preview(
-    showBackground = true
-)
 @Composable
 fun HomeScreenStateless(
-    state: HomeScreenState = HomeScreenState.previewState
+    state: HomeScreenState
 ) {
 
-    val localization by state.data.localization
-    val appLanguage by state.data.appLanguage
+    val localization by remember {
+        state.data.localization
+    }
+    val appLanguage by remember {
+        state.data.appLanguage
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colors.background)
             .padding(horizontal = 24.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -80,44 +88,45 @@ fun HomeScreenStateless(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 24.dp)
         ) {
-            Button(onClick = state.delegates.onTapEnglish) {
-                Text(text = localization.lblEnglish)
-            }
-            Spacer(Modifier.width(16.dp))
-            Button(onClick = state.delegates.onTapChinese) {
-                Text(text = localization.lblChinese)
-            }
-            Spacer(Modifier.width(16.dp))
-            Button(onClick = state.delegates.onTapBurmese) {
-                Text(text = localization.lblBurmese)
-            }
+            CodigoButton(
+                text = localization.lblEnglish,
+                onClick = state.delegates.onTapEnglish,
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(Modifier.width(12.dp))
+            CodigoButton(
+                text = localization.lblChinese,
+                onClick = state.delegates.onTapChinese,
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(Modifier.width(12.dp))
+            CodigoButton(
+                text = localization.lblBurmese,
+                onClick = state.delegates.onTapBurmese,
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }
 
-data class HomeScreenState(
-    val data : Data = Data(),
-    val delegates: Delegate = Delegate()
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview(
+    @PreviewParameter(HomeScreenStateProvider::class)
+    state : HomeScreenState
 ) {
-    data class Data(
-        val localization: State<Localization> = mutableStateOf(Localization()),
-        val appLanguage: State<AppLanguage> = mutableStateOf(AppLanguage.ENGLISH)
-    )
+    DynamicLocalizationTheme {
+        HomeScreenStateless(state)
+    }
+}
 
-    data class Delegate(
-        val onTapEnglish: () -> Unit = {},
-        val onTapChinese: () -> Unit = {},
-        val onTapBurmese: () -> Unit = {}
-    )
-
-    companion object {
-        val previewState by lazy {
-            HomeScreenState(
-                data = Data(
-                    localization = mutableStateOf(Localization.getDefaultLocalization())
-                ),
-                delegates = Delegate()
-            )
-        }
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreviewDark(
+    @PreviewParameter(HomeScreenStateProvider::class)
+    state : HomeScreenState
+) {
+    DynamicLocalizationTheme(darkTheme = true) {
+        HomeScreenStateless(state)
     }
 }

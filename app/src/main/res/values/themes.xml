@@ -2,6 +2,7 @@
 <resources>
 
     <style name="Theme.DynamicLocalization" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/purple_700</item>
+        <item name="android:statusBarColor">#D73D35</item>
+        <item name="android:navigationBarColor">#D73D35</item>
     </style>
 </resources>
